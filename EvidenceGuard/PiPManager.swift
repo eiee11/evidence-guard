@@ -30,7 +30,7 @@ class PiPManager: NSObject {
         do {
             try AVAudioSession.sharedInstance().setCategory(
                 .playAndRecord,
-                mode: .movieRecording,
+                mode: .default,
                 options: [.mixWithOthers, .allowBluetooth]
             )
             try AVAudioSession.sharedInstance().setActive(true)
@@ -137,17 +137,6 @@ class PiPManager: NSObject {
             sampleBufferOut: &sampleBuffer
         )
         guard bs == noErr, let sb = sampleBuffer else { return nil }
-
-        // Display immediately
-        if let arr = CMSampleBufferGetSampleAttachmentsArray(sb, createIfNeeded: true),
-           CFArrayGetCount(arr) > 0 {
-            let dict = unsafeBitCast(CFArrayGetValueAtIndex(arr, 0), to: CFMutableDictionary.self)
-            CFDictionarySetValue(
-                dict,
-                Unmanaged.passUnretained(kCMSampleBufferAttachmentKey_DisplayImmediately).toOpaque(),
-                Unmanaged.passUnretained(kCFBooleanTrue).toOpaque()
-            )
-        }
 
         return sb
     }
