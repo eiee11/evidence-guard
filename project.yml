@@ -1,0 +1,21 @@
+name: EvidenceGuard
+options:
+  bundleIdPrefix: com.evidenceguard
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  EvidenceGuard:
+    type: application
+    platform: iOS
+    sources:
+      - EvidenceGuard
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.evidenceguard.sousou
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.0"
+        IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        INFOPLIST_FILE: EvidenceGuard/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
