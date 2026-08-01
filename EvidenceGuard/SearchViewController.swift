@@ -14,7 +14,7 @@ class SearchViewController: UIViewController, WKNavigationDelegate {
         setupWebView()
     }
 
-    // MARK: - Header (logo + hidden long-press trigger)
+    // MARK: - Header (logo + tap to toggle recording)
 
     private func setupHeader() {
         let header = UIView()
@@ -43,11 +43,9 @@ class SearchViewController: UIViewController, WKNavigationDelegate {
             logoLabel.heightAnchor.constraint(equalToConstant: 44)
         ])
 
-        // Long press logo 3 seconds → toggle recording
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLogoLongPress(_:)))
-        longPress.minimumPressDuration = 3.0
-        longPress.allowableMovement = 50
-        logoLabel.addGestureRecognizer(longPress)
+        // Tap logo → toggle recording
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleLogoTap))
+        logoLabel.addGestureRecognizer(tap)
     }
 
     // MARK: - WebView (Baidu search — real and functional)
@@ -73,10 +71,9 @@ class SearchViewController: UIViewController, WKNavigationDelegate {
         }
     }
 
-    // MARK: - Long Press → Toggle Recording
+    // MARK: - Tap → Toggle Recording
 
-    @objc private func handleLogoLongPress(_ gesture: UILongPressGestureRecognizer) {
-        guard gesture.state == .began else { return }
+    @objc private func handleLogoTap() {
         toggleRecording()
     }
 
