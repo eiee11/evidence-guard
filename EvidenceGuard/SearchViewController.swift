@@ -6,6 +6,7 @@ class SearchViewController: UIViewController, WKNavigationDelegate {
     private var webView: WKWebView!
     private var logoLabel: UILabel!
     private var isRecording = false
+    private var backgroundTaskId: UIBackgroundTaskIdentifier = .invalid
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,13 +85,27 @@ class SearchViewController: UIViewController, WKNavigationDelegate {
             PiPManager.shared.stop()
             isRecording = false
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            // End background task
+            if backgroundTaskId != .invalid {
+                UIApplication.shared.endBackgroundTask(backgroundTaskId)
+                backgroundTaskId = .invalid
+            }
         } else {
-            // Start
+            // Start — configure audio session FIRST (before capture session)
+            PiPManager.shared.configureAudioSession()
             RecordingManager.shared.configure()
             RecordingManager.shared.startRecording()
             PiPManager.shared.start(in: view)
             isRecording = true
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            // Begin background task for extra keep-alive
+            backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "recording") { [weak self] in
+                guard let self = self else { return }
+                if self.backgroundTaskId != .invalid {
+                    UIApplication.shared.endBackgroundTask(self.backgroundTaskId)
+                    self.backgroundTaskId = .invalid
+                }
+            }
         }
     }
 }
