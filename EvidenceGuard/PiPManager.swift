@@ -23,39 +23,42 @@ class PiPManager: NSObject {
         super.init()
     }
 
-    // MARK: - Start / Stop
+    // MARK: - Audio Session (call BEFORE starting capture session)
 
-    func start(in hostView: UIView) {
-        // 1. Audio session — must be active for PiP
+    func configureAudioSession() {
         do {
             try AVAudioSession.sharedInstance().setCategory(
                 .playAndRecord,
-                mode: .default,
+                mode: .videoRecording,
                 options: [.mixWithOthers, .allowBluetooth]
             )
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Audio session error: \(error)")
         }
+    }
 
-        // 2. Pixel buffer pool for 2×2 black frames
+    // MARK: - Start / Stop
+
+    func start(in hostView: UIView) {
+        // 1. Pixel buffer pool for 1×1 black frames
         createPixelBufferPool()
 
-        // 3. Sample-buffer display layer (hidden behind webview)
+        // 2. Sample-buffer display layer (hidden behind webview)
         let layer = AVSampleBufferDisplayLayer()
         layer.frame = CGRect(x: 0, y: 0, width: 2, height: 2)
         hostView.layer.insertSublayer(layer, at: 0)
         self.sampleBufferDisplayLayer = layer
 
-        // 4. Feed black frames at ~30 fps
+        // 3. Feed black frames at ~30 fps
         frameCounter = 0
         displayLink = CADisplayLink(target: self, selector: #selector(feedBlackFrame))
         displayLink?.preferredFramesPerSecond = 30
         displayLink?.add(to: .main, forMode: .common)
 
-        // 5. Create PiP controller after a few frames are queued
+        // 4. Create PiP controller after a few frames are queued
         setupRetryCount = 0
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             self?.trySetupPiPController()
         }
     }
