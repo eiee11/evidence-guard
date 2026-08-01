@@ -79,8 +79,8 @@ class PiPManager: NSObject {
     private func createPixelBufferPool() {
         let attrs: [String: Any] = [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
-            kCVPixelBufferWidthKey as String: 2,
-            kCVPixelBufferHeightKey as String: 2,
+            kCVPixelBufferWidthKey as String: 1,
+            kCVPixelBufferHeightKey as String: 1,
             kCVPixelBufferIOSurfacePropertiesKey as String: [:] as [String: Any]
         ]
         var pool: CVPixelBufferPool?
